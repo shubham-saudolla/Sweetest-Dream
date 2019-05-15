@@ -6,65 +6,53 @@ public class EnemyAttack : MonoBehaviour
     public float timeBetweenAttacks = 0.5f;
     public int attackDamage = 10;
 
+    private Animator _anim;
+    private GameObject _player;
+    private PlayerHealth _playerHealth;
+    private bool _playerInRange;
+    private float _timer;
 
-    Animator anim;
-    GameObject player;
-    PlayerHealth playerHealth;
-    //EnemyHealth enemyHealth;
-    bool playerInRange;
-    float timer;
-
-
-    void Awake ()
+    void Awake()
     {
-        player = GameObject.FindGameObjectWithTag ("Player");
-        playerHealth = player.GetComponent <PlayerHealth> ();
-        //enemyHealth = GetComponent<EnemyHealth>();
-        anim = GetComponent <Animator> ();
+        _player = GameObject.FindGameObjectWithTag("Player");
+        _playerHealth = _player.GetComponent<PlayerHealth>();
+        _anim = GetComponent<Animator>();
     }
 
-
-    void OnTriggerEnter (Collider other)
+    private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject == player)
+        if (other.gameObject == _player)
         {
-            playerInRange = true;
+            _playerInRange = true;
         }
     }
 
-
-    void OnTriggerExit (Collider other)
+    private void OnTriggerExit(Collider other)
     {
-        if(other.gameObject == player)
+        _playerInRange = false;
+    }
+
+    void Update()
+    {
+        _timer += Time.deltaTime;
+
+        if (_timer >= timeBetweenAttacks && _playerInRange)
         {
-            playerInRange = false;
+            Attack();
+        }
+        if (_playerHealth.currentHealth <= 0)
+        {
+            _anim.SetTrigger("PlayerDead");
         }
     }
 
-
-    void Update ()
+    void Attack()
     {
-        timer += Time.deltaTime;
+        _timer = 0f;
 
-        if(timer >= timeBetweenAttacks && playerInRange/* && enemyHealth.currentHealth > 0*/)
+        if (_playerHealth.currentHealth > 0)
         {
-            Attack ();
-        }
-
-        if(playerHealth.currentHealth <= 0)
-        {
-            anim.SetTrigger ("PlayerDead");
-        }
-    }
-
-
-    void Attack ()
-    {
-        timer = 0f;
-
-        if(playerHealth.currentHealth > 0)
-        {
-            playerHealth.TakeDamage (attackDamage);
+            _playerHealth.TakeDamage(attackDamage);
         }
     }
 }
