@@ -4,7 +4,8 @@ using System.Collections;
 public class EnemyAttack : MonoBehaviour
 {
     public float timeBetweenAttacks = 0.5f;
-    public int attackDamage = 10;
+    public int attackDamageMin;
+    public int attackDamageMax;
 
     private Animator _anim;
     private GameObject _player;
@@ -12,6 +13,7 @@ public class EnemyAttack : MonoBehaviour
     private EnemyHealth _enemyHealth;
     private bool _playerInRange;
     private float _timer;
+    private int _attackDamage;
 
     void Awake()
     {
@@ -19,6 +21,7 @@ public class EnemyAttack : MonoBehaviour
         _playerHealth = _player.GetComponent<PlayerHealth>();
         _enemyHealth = GetComponent<EnemyHealth>();
         _anim = GetComponent<Animator>();
+        _attackDamage = Random.Range(attackDamageMin, attackDamageMax);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -54,7 +57,7 @@ public class EnemyAttack : MonoBehaviour
 
         if (_playerHealth.currentHealth > 0)
         {
-            _playerHealth.TakeDamage(attackDamage);
+            _playerHealth.TakeDamage(_attackDamage);
         }
     }
 }
