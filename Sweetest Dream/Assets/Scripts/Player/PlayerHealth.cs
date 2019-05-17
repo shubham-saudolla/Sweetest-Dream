@@ -75,16 +75,13 @@ public class PlayerHealth : MonoBehaviour
 
     public void RestartLevel()
     {
-        if (currentHealth <= 0)
-        {
-            _gameOverManager.GetComponent<Animator>().SetTrigger("GameOver");
+        _gameOverManager.GetComponent<Animator>().SetTrigger("GameOver");
+        StartCoroutine(WaitAndRestart());
+    }
 
-            _restartTimer += Time.deltaTime;
-
-            if (_restartTimer >= restartDelay)
-            {
-                SceneManager.LoadScene(0);
-            }
-        }
+    IEnumerator WaitAndRestart()
+    {
+        yield return new WaitForSeconds(restartDelay);
+        SceneManager.LoadScene(0);
     }
 }
