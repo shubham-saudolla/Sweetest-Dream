@@ -12,6 +12,7 @@ public class PlayerHealth : MonoBehaviour
     public AudioClip deathClip;
     public float flashSpeed = 5f;
     public Color flashColor = new Color(1f, 0f, 0f, 0.1f);
+    public float restartDelay = 5f;
 
     private Animator _anim;
     private AudioSource _playerAudio;
@@ -19,6 +20,9 @@ public class PlayerHealth : MonoBehaviour
     private PlayerShooting _playerShooting;
     private bool _isDead;
     private bool _damaged;
+    private float _restartTimer;
+
+    public GameOverManager _gameOverManager;
 
     void Awake()
     {
@@ -67,5 +71,20 @@ public class PlayerHealth : MonoBehaviour
 
         _playerMovement.enabled = false;
         _playerShooting.enabled = false;
+    }
+
+    public void RestartLevel()
+    {
+        if (currentHealth <= 0)
+        {
+            _gameOverManager.GetComponent<Animator>().SetTrigger("GameOver");
+
+            _restartTimer += Time.deltaTime;
+
+            if (_restartTimer >= restartDelay)
+            {
+                SceneManager.LoadScene(0);
+            }
+        }
     }
 }
